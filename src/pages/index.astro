@@ -1,0 +1,59 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { site } from '../data/site';
+---
+
+<BaseLayout description={site.description}>
+  <section class="hero" aria-labelledby="intro-heading">
+    <p class="eyebrow">01 / INTRODUCTION</p>
+    <h1 id="intro-heading">Hey, I'm Triet.</h1>
+    <p class="hero-tagline">Data, code, and everything in between.</p>
+    <p class="text-muted">Building things, breaking things, writing about what I learn.</p>
+    <div class="hero-links">
+      <a class="button-link" href="#projects">Explore projects</a>
+      <a href="#writing">Read my writing <span aria-hidden="true">→</span></a>
+    </div>
+  </section>
+
+  <!-- Navigation placeholders only; directory pages and content are later tickets. -->
+  <div class="notebook-sections">
+    <section id="projects" class="notebook-section" aria-labelledby="projects-heading">
+      <p class="eyebrow">02 / IN PREPARATION</p>
+      <h2 id="projects-heading">Projects</h2>
+      <p class="text-muted">Case studies will appear here when they are ready to share.</p>
+    </section>
+    <section id="writing" class="notebook-section" aria-labelledby="writing-heading">
+      <p class="eyebrow">03 / IN PREPARATION</p>
+      <h2 id="writing-heading">Writing</h2>
+      <p class="text-muted">The notebook is taking shape. Articles are still to come.</p>
+    </section>
+  </div>
+</BaseLayout>
+
+<style>
+  .hero { max-width: var(--hero-width); padding-block: var(--section-space); }
+  .hero-tagline {
+    font-size: clamp(1.25rem, 3vw, 1.75rem);
+    line-height: 1.4;
+    max-width: 30ch;
+    margin-block: var(--space-6) var(--space-4);
+  }
+  .hero-links {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-4) var(--space-6);
+    margin-top: var(--space-8);
+  }
+  .hero-links > a { display: inline-flex; align-items: center; min-height: 44px; gap: var(--space-2); }
+  .notebook-sections {
+    display: grid;
+    gap: var(--space-12);
+    padding-bottom: var(--section-space);
+  }
+  .notebook-section { border-top: var(--rule); padding-top: var(--space-8); }
+  .notebook-section p:last-child { max-width: 44ch; margin-top: var(--space-4); }
+  @media (min-width: 640px) {
+    .notebook-sections { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+</style>
