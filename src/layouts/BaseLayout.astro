@@ -1,6 +1,5 @@
 ---
 import SiteHeader from '../components/SiteHeader.astro';
-import SiteFooter from '../components/SiteFooter.astro';
 import { site } from '../data/site';
 import { canonicalURL } from '../utils/seo';
 import '../styles/global.css';
@@ -31,6 +30,5 @@ const canonical = canonicalURL(Astro.url.pathname, Astro.site);
     <main id="main" class="site-container main-content" tabindex="-1">
       <slot />
     </main>
-    <SiteFooter />
   </body>
 </html>

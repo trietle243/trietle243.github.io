@@ -1,59 +1,798 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { site } from '../data/site';
+import { asciiArt } from '../data/ascii-art';
+import { experiences } from '../data/experience';
+import { getCollection } from 'astro:content';
+import { sortArticlesByDate } from '../utils/content';
+
+// In DEV mode show drafts for author inspection; in PROD build strictly exclude drafts.
+const rawProjects = await getCollection('projects', ({ data }) => {
+  return import.meta.env.DEV ? true : !data.draft;
+});
+const displayProjects = rawProjects.filter((p) => p.id !== 'example-project');
+
+const rawArticles = await getCollection('writing', ({ data }) => {
+  return import.meta.env.DEV ? true : !data.draft;
+});
+const sortedArticles = sortArticlesByDate(rawArticles);
+const displayArticles = sortedArticles.filter((a) => a.id !== 'example-article');
 ---
 
 <BaseLayout description={site.description}>
-  <section class="hero" aria-labelledby="intro-heading">
+  <!-- 1/ Intro -->
+  <section class="hero" id="intro" aria-labelledby="intro-heading">
     <p class="eyebrow">01 / INTRODUCTION</p>
-    <h1 id="intro-heading">Hey, I'm Triet.</h1>
-    <p class="hero-tagline">Data, code, and everything in between.</p>
-    <p class="text-muted">Building things, breaking things, writing about what I learn.</p>
-    <div class="hero-links">
-      <a class="button-link" href="#projects">Explore projects</a>
-      <a href="#writing">Read my writing <span aria-hidden="true">→</span></a>
+    <div class="hero-content">
+      <div class="hero-text">
+        <h1 id="intro-heading">Hey, I'm Triet.</h1>
+        <p class="hero-nickname text-muted">
+          You can call me <span class="tooltip-trigger" tabindex="0">Phil<span class="tooltip" role="tooltip">Phil means Philosophy which is the meaning of my name</span></span> as well.
+        </p>
+        <p class="hero-role text-muted">
+          I am a <span class="typewriter-container"><span class="typewriter-text" id="typewriter-text">Data Analyst</span><span class="typewriter-cursor" aria-hidden="true">_</span></span>
+        </p>
+        <div class="hero-contacts" aria-label="Personal contact and profiles">
+          <a
+            href={site.githubUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="contact-chip"
+            aria-label="GitHub profile (opens in new tab)"
+          >
+            <svg class="contact-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"></path><path d="M9 18c-4.51 2-5-2-7-2"></path></svg>
+            <span>GitHub</span>
+            <span class="ext-arrow" aria-hidden="true">↗</span>
+          </a>
+
+          <a
+            href={site.contact.linkedin}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="contact-chip"
+            aria-label="LinkedIn profile (opens in new tab)"
+          >
+            <svg class="contact-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>
+            <span>LinkedIn</span>
+            <span class="ext-arrow" aria-hidden="true">↗</span>
+          </a>
+
+          <div class="email-chip-group">
+            <a
+              href={`mailto:${site.contact.email}`}
+              class="contact-chip email-chip"
+              aria-label={`Send email to ${site.contact.email}`}
+            >
+              <svg class="contact-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="20" height="16" x="2" y="4" rx="2"></rect><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path></svg>
+              <span>{site.contact.email}</span>
+            </a>
+            <button
+              type="button"
+              class="copy-btn"
+              id="copy-email-btn"
+              data-email={site.contact.email}
+              aria-label="Copy email address"
+              title="Copy email to clipboard"
+            >
+              <svg class="copy-icon" id="copy-icon" xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path></svg>
+              <svg class="check-icon hidden" id="check-icon" xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>
+              <span class="copy-text" id="copy-text">Copy</span>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="hero-media">
+        <div class="portrait-card">
+          <div class="portrait-header">
+            <span class="portrait-title">triet.txt</span>
+            <span class="portrait-tag">ascii</span>
+          </div>
+          <div class="portrait-body">
+            <pre class="ascii-view" aria-label="ASCII art portrait of Triet smiling in front of a river" role="img">{asciiArt}</pre>
+          </div>
+        </div>
+      </div>
     </div>
   </section>
 
-  <!-- Navigation placeholders only; directory pages and content are later tickets. -->
+  <!-- Vertically stacked sections 2 to 5 -->
   <div class="notebook-sections">
-    <section id="projects" class="notebook-section" aria-labelledby="projects-heading">
-      <p class="eyebrow">02 / IN PREPARATION</p>
-      <h2 id="projects-heading">Projects</h2>
-      <p class="text-muted">Case studies will appear here when they are ready to share.</p>
+    <!-- 2/ About me -->
+    <section id="about" class="notebook-section" aria-labelledby="about-heading">
+      <p class="eyebrow">02 / ABOUT ME</p>
+      <h2 id="about-heading">About me</h2>
+      <div class="section-body prose-measure">
+        <p>
+          I am a Data Analyst with a deep curiosity for how software, algorithms, and data platforms work under the surface. I enjoy exploring technical problems from first principles, writing clean tools, and learning by getting my hands dirty.
+        </p>
+      </div>
     </section>
+
+    <!-- 3/ Experience -->
+    <section id="experience" class="notebook-section" aria-labelledby="experience-heading">
+      <p class="eyebrow">03 / EXPERIENCE</p>
+      <h2 id="experience-heading">Experience</h2>
+      <div class="section-body">
+        {experiences.length === 0 ? (
+          <p class="text-muted">
+            Detailed career timeline and verified roles will be documented here.
+          </p>
+        ) : (
+          <div class="experience-list">
+            {experiences.map((item) => (
+              <div class="experience-card">
+                <div class="experience-header">
+                  <div>
+                    <h3 class="experience-role">{item.role}</h3>
+                    <p class="experience-company text-muted">{item.organization}</p>
+                  </div>
+                  <span class="experience-period">{item.period}</span>
+                </div>
+                {item.description && <p class="experience-desc">{item.description}</p>}
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </section>
+
+    <!-- 4/ Projects -->
+    <section id="projects" class="notebook-section" aria-labelledby="projects-heading">
+      <div class="section-header">
+        <div>
+          <p class="eyebrow">04 / PROJECTS</p>
+          <h2 id="projects-heading">Projects</h2>
+        </div>
+      </div>
+      <div class="section-body">
+        {displayProjects.length === 0 ? (
+          <p class="text-muted">Case studies will appear here when they are ready to share.</p>
+        ) : (
+          <div class="projects-grid">
+            {displayProjects.map((project) => (
+              <article class="project-card">
+                <div class="card-meta">
+                  <span class="category-tag">{project.data.category}</span>
+                  {project.data.draft && (
+                    <span class="draft-badge" title="Unpublished draft">DRAFT</span>
+                  )}
+                </div>
+                <h3 class="card-title">{project.data.title}</h3>
+                <p class="card-summary text-muted">{project.data.summary}</p>
+                {project.data.technologies.length > 0 && (
+                  <ul class="tech-list" aria-label="Technologies used">
+                    {project.data.technologies.map((tech) => (
+                      <li class="tech-chip">{tech}</li>
+                    ))}
+                  </ul>
+                )}
+              </article>
+            ))}
+          </div>
+        )}
+      </div>
+    </section>
+
+    <!-- 5/ Writing -->
     <section id="writing" class="notebook-section" aria-labelledby="writing-heading">
-      <p class="eyebrow">03 / IN PREPARATION</p>
-      <h2 id="writing-heading">Writing</h2>
-      <p class="text-muted">The notebook is taking shape. Articles are still to come.</p>
+      <div class="section-header">
+        <div>
+          <p class="eyebrow">05 / WRITING</p>
+          <h2 id="writing-heading">Writing</h2>
+        </div>
+        <a href="/writing/" class="section-action">All writing <span aria-hidden="true">→</span></a>
+      </div>
+      <div class="section-body">
+        {displayArticles.length === 0 ? (
+          <p class="text-muted">The notebook is taking shape. Articles are still to come.</p>
+        ) : (
+          <div class="articles-list">
+            {displayArticles.map((article) => {
+              const dateStr = article.data.publishedAt
+                ? new Intl.DateTimeFormat('en-US', {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric',
+                  }).format(article.data.publishedAt)
+                : null;
+
+              return (
+                <article class="writing-item">
+                  <div class="writing-main">
+                    <h3 class="writing-title">
+                      <a href={`/writing/${article.id}/`}>{article.data.title}</a>
+                    </h3>
+                    <p class="writing-desc text-muted">{article.data.description}</p>
+                  </div>
+                  <div class="writing-meta">
+                    {dateStr && <time class="writing-date">{dateStr}</time>}
+                    {article.data.draft && (
+                      <span class="draft-badge" title="Unpublished draft">DRAFT</span>
+                    )}
+                  </div>
+                </article>
+              );
+            })}
+          </div>
+        )}
+      </div>
     </section>
   </div>
 </BaseLayout>
 
 <style>
-  .hero { max-width: var(--hero-width); padding-block: var(--section-space); }
-  .hero-tagline {
-    font-size: clamp(1.25rem, 3vw, 1.75rem);
-    line-height: 1.4;
-    max-width: 30ch;
-    margin-block: var(--space-6) var(--space-4);
+  .hero {
+    width: 100%;
+    max-width: var(--page-width);
+    padding-top: clamp(1.25rem, 2.5vw, 2.25rem);
+    padding-bottom: clamp(1.75rem, 3.5vw, 2.75rem);
   }
-  .hero-links {
+  .hero-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-8);
+  }
+  .hero-text {
+    min-width: 0;
+  }
+  .hero-media {
+    width: 100%;
+  }
+  .portrait-card {
+    width: 100%;
+    background: var(--surface);
+    border: var(--rule);
+    border-radius: var(--radius-surface);
+    overflow: hidden;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+    display: flex;
+    flex-direction: column;
+  }
+  .portrait-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    padding: var(--space-2) var(--space-4);
+    background: rgba(0, 0, 0, 0.02);
+    border-bottom: var(--rule);
+    font-family: var(--font-mono);
+    color: var(--muted);
+  }
+  .portrait-title {
+    font-size: 0.6875rem;
+    letter-spacing: 0.04em;
+    font-weight: 500;
+  }
+  .portrait-tag {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.04em;
+    color: var(--muted);
+    border: var(--rule);
+    padding: 1px 6px;
+    border-radius: var(--radius-control);
+    background: var(--canvas);
+  }
+  .portrait-body {
+    width: 100%;
+    padding: var(--space-3) var(--space-4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--surface);
+    overflow: hidden;
+    container-type: inline-size;
+    box-sizing: border-box;
+  }
+  .ascii-view {
+    font-family: var(--font-code);
+    font-size: 2.8px;
+    font-size: clamp(2.4px, 1.02cqw, 4.8px);
+    line-height: 1.25;
+    letter-spacing: 0;
+    color: var(--ink);
+    margin: 0;
+    background: transparent;
+    user-select: none;
+    white-space: pre;
+    text-align: center;
+    -webkit-text-size-adjust: none;
+    text-size-adjust: none;
+  }
+  @media (min-width: 640px) {
+    .hero-content {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: var(--space-12);
+      align-items: center;
+    }
+  }
+  .hero-nickname {
+    margin-top: var(--space-2);
+    font-size: 1.0625rem;
+    line-height: 1.5;
+  }
+  .tooltip-trigger {
+    position: relative;
+    display: inline-block;
+    color: var(--ink);
+    font-weight: 500;
+    text-decoration: underline dotted var(--muted);
+    text-underline-offset: 0.25em;
+    cursor: help;
+  }
+  .tooltip-trigger:focus-visible {
+    outline: var(--focus-ring);
+    outline-offset: var(--focus-offset);
+    border-radius: 2px;
+  }
+  .tooltip {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--ink);
+    color: var(--surface);
+    font-family: var(--font-body);
+    font-size: 0.8125rem;
+    font-weight: normal;
+    line-height: 1.4;
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--radius-control);
+    white-space: normal;
+    width: max-content;
+    max-width: 240px;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 150ms ease, transform 150ms ease;
+    z-index: 20;
+  }
+  .tooltip::after {
+    content: '';
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 5px solid transparent;
+    border-bottom-color: var(--ink);
+  }
+  .tooltip-trigger:hover .tooltip,
+  .tooltip-trigger:focus-visible .tooltip,
+  .tooltip-trigger:focus .tooltip {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) translateY(2px);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .tooltip { transition: none; }
+  }
+  .hero-role {
+    margin-top: var(--space-3);
+    font-size: 1.125rem;
+    line-height: 1.5;
+  }
+  .typewriter-container {
+    color: var(--ink);
+    font-weight: 500;
+  }
+  .typewriter-cursor {
+    display: inline-block;
+    color: var(--accent);
+    font-family: var(--font-mono);
+    font-weight: 400;
+    margin-left: 1px;
+    animation: cursor-blink 1s step-end infinite;
+  }
+  @keyframes cursor-blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .typewriter-cursor { animation: none; opacity: 1; }
+  }
+
+  /* Hero Contacts */
+  .hero-contacts {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: var(--space-4) var(--space-6);
-    margin-top: var(--space-8);
+    gap: var(--space-2) var(--space-3);
+    margin-top: var(--space-4);
   }
-  .hero-links > a { display: inline-flex; align-items: center; min-height: 44px; gap: var(--space-2); }
+  .contact-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 10px;
+    background: var(--surface);
+    border: var(--rule);
+    border-radius: var(--radius-control);
+    font-size: 0.8125rem;
+    font-family: var(--font-mono);
+    color: var(--ink);
+    text-decoration: none;
+    line-height: 1.2;
+    transition: border-color 150ms ease, background-color 150ms ease, color 150ms ease;
+  }
+  .contact-chip:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: #fdfcf9;
+  }
+  .contact-icon {
+    flex-shrink: 0;
+    color: var(--muted);
+    transition: color 150ms ease;
+  }
+  .contact-chip:hover .contact-icon {
+    color: var(--accent);
+  }
+  .ext-arrow {
+    font-size: 0.75rem;
+    color: var(--muted);
+    transition: color 150ms ease;
+  }
+  .contact-chip:hover .ext-arrow {
+    color: var(--accent);
+  }
+  .email-chip-group {
+    display: inline-flex;
+    align-items: stretch;
+    border: var(--rule);
+    border-radius: var(--radius-control);
+    background: var(--surface);
+    overflow: hidden;
+    transition: border-color 150ms ease;
+  }
+  .email-chip-group:hover,
+  .email-chip-group:focus-within {
+    border-color: var(--accent);
+  }
+  .email-chip {
+    border: none;
+    border-radius: 0;
+    background: transparent;
+    padding-right: var(--space-2);
+  }
+  .copy-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 5px 10px;
+    background: rgba(0, 0, 0, 0.03);
+    border: none;
+    border-left: var(--rule);
+    color: var(--muted);
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    cursor: pointer;
+    line-height: 1.2;
+    transition: background-color 150ms ease, color 150ms ease;
+  }
+  .copy-btn:hover {
+    background: rgba(39, 93, 98, 0.1);
+    color: var(--accent);
+  }
+  .copy-btn.copied {
+    background: #e6f4ea;
+    color: #137333;
+  }
+  .copy-btn:focus-visible {
+    outline: var(--focus-ring);
+    outline-offset: -1px;
+  }
+  .copy-text {
+    font-weight: 500;
+  }
+  .hidden {
+    display: none !important;
+  }
+
+  /* Notebook Sections */
   .notebook-sections {
-    display: grid;
-    gap: var(--space-12);
+    display: flex;
+    flex-direction: column;
+    gap: clamp(2rem, 4.5vw, 3.5rem);
     padding-bottom: var(--section-space);
   }
-  .notebook-section { border-top: var(--rule); padding-top: var(--space-8); }
-  .notebook-section p:last-child { max-width: 44ch; margin-top: var(--space-4); }
+  .notebook-section {
+    border-top: var(--rule);
+    padding-top: var(--space-6);
+  }
+  .section-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-4);
+  }
+  .section-action {
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    color: var(--accent);
+    text-decoration: none;
+    white-space: nowrap;
+  }
+  .section-action:hover {
+    text-decoration: underline;
+  }
+  .section-body {
+    margin-top: var(--space-4);
+  }
+  .prose-measure {
+    max-width: var(--prose-width);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    line-height: 1.7;
+  }
+  .draft-badge {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    padding: 1px 6px;
+    border-radius: var(--radius-control);
+    background: #fef3c7;
+    color: #92400e;
+    border: 1px solid #fde68a;
+  }
+  .category-tag {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .projects-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-6);
+  }
   @media (min-width: 640px) {
-    .notebook-sections { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .projects-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  .project-card {
+    background: var(--surface);
+    border: var(--rule);
+    border-radius: var(--radius-surface);
+    padding: var(--space-6);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+  .card-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-2);
+  }
+  .card-title {
+    font-size: 1.25rem;
+    margin: 0;
+    line-height: 1.3;
+  }
+  .card-summary {
+    margin: 0;
+    font-size: 0.9375rem;
+    line-height: 1.5;
+  }
+  .tech-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    list-style: none;
+    padding: 0;
+    margin: var(--space-2) 0 0;
+  }
+  .tech-chip {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    padding: 2px 8px;
+    background: var(--canvas);
+    border: var(--rule);
+    border-radius: var(--radius-control);
+    color: var(--muted);
+  }
+  .articles-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+  }
+  .writing-item {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    padding-bottom: var(--space-6);
+    border-bottom: var(--rule);
+  }
+  .writing-item:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+  @media (min-width: 640px) {
+    .writing-item {
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: var(--space-6);
+    }
+  }
+  .writing-main {
+    min-width: 0;
+  }
+  .writing-title {
+    font-size: 1.125rem;
+    margin: 0;
+    line-height: 1.4;
+  }
+  .writing-title a {
+    color: var(--ink);
+    text-decoration: none;
+  }
+  .writing-title a:hover {
+    color: var(--accent);
+    text-decoration: underline;
+  }
+  .writing-desc {
+    margin-top: var(--space-1);
+    font-size: 0.9375rem;
+    line-height: 1.5;
+  }
+  .writing-meta {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    white-space: nowrap;
+  }
+  .writing-date {
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    color: var(--muted);
+  }
+  .experience-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+  }
+  .experience-card {
+    padding-bottom: var(--space-6);
+    border-bottom: var(--rule);
+  }
+  .experience-card:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+  .experience-header {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: var(--space-2);
+  }
+  .experience-role {
+    font-size: 1.125rem;
+    margin: 0;
+  }
+  .experience-company {
+    margin-top: var(--space-1);
+    font-size: 0.9375rem;
+  }
+  .experience-period {
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    color: var(--muted);
+  }
+  .experience-desc {
+    margin-top: var(--space-2);
+    font-size: 0.9375rem;
+    line-height: 1.6;
   }
 </style>
+
+<script>
+  (() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    const el = document.getElementById('typewriter-text');
+    if (!el) return;
+    const element = el;
+
+    const words = [
+      'Data Analyst',
+      'Wanna-be Engineer',
+      'Curious Guy',
+      'Music Lover',
+    ];
+
+    let currentIndex = 0;
+    let charIndex = words[0].length;
+    let isDeleting = false;
+
+    function getNextIndex(current: number): number {
+      let next = Math.floor(Math.random() * words.length);
+      while (next === current && words.length > 1) {
+        next = Math.floor(Math.random() * words.length);
+      }
+      return next;
+    }
+
+    function type() {
+      const currentWord = words[currentIndex];
+
+      if (isDeleting) {
+        charIndex--;
+        element.textContent = currentWord.substring(0, charIndex);
+      } else {
+        charIndex++;
+        element.textContent = currentWord.substring(0, charIndex);
+      }
+
+      let speed = isDeleting ? 45 : 90;
+
+      if (!isDeleting && charIndex === currentWord.length) {
+        speed = 2000;
+        isDeleting = true;
+      } else if (isDeleting && charIndex === 0) {
+        isDeleting = false;
+        currentIndex = getNextIndex(currentIndex);
+        speed = 400;
+      }
+
+      setTimeout(type, speed);
+    }
+
+    setTimeout(() => {
+      isDeleting = true;
+      type();
+    }, 2000);
+  })();
+
+  // Copy email to clipboard
+  (() => {
+    const copyBtn = document.getElementById('copy-email-btn');
+    const copyText = document.getElementById('copy-text');
+    const copyIcon = document.getElementById('copy-icon');
+    const checkIcon = document.getElementById('check-icon');
+
+    if (!copyBtn || !copyText) return;
+
+    copyBtn.addEventListener('click', async () => {
+      const email = copyBtn.getAttribute('data-email') || '';
+      if (!email) return;
+
+      let success = false;
+      try {
+        if (navigator.clipboard) {
+          await navigator.clipboard.writeText(email);
+          success = true;
+        }
+      } catch {
+        success = false;
+      }
+
+      if (success) {
+        copyBtn.classList.add('copied');
+        copyText.textContent = 'Copied!';
+        if (copyIcon && checkIcon) {
+          copyIcon.classList.add('hidden');
+          checkIcon.classList.remove('hidden');
+        }
+
+        setTimeout(() => {
+          copyBtn.classList.remove('copied');
+          copyText.textContent = 'Copy';
+          if (copyIcon && checkIcon) {
+            copyIcon.classList.remove('hidden');
+            checkIcon.classList.add('hidden');
+          }
+        }, 2000);
+      }
+    });
+  })();
+</script>

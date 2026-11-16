@@ -31,7 +31,7 @@
   --hero-width: 48.75rem;
   --prose-width: 72ch;
   --page-gutter: clamp(1.25rem, 4vw, 3rem);
-  --section-space: clamp(3.5rem, 8vw, 7rem);
+  --section-space: clamp(2rem, 4vw, 3.5rem);
   --radius-surface: 0.75rem;
   --radius-control: 0.375rem;
   --rule: 1px solid var(--border);
@@ -91,7 +91,7 @@
     font-size: var(--text-label);
     letter-spacing: 0.06em;
     color: var(--muted);
-    margin-bottom: var(--space-6);
+    margin-bottom: var(--space-4);
   }
   .button-link {
     border: 1px solid var(--accent);

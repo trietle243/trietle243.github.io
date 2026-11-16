@@ -2,28 +2,32 @@
 import { site } from '../data/site';
 
 const pathname = Astro.url.pathname;
-// Until their directory tickets, these destinations are explicit home placeholders.
 const links = [
   { label: 'Home', href: '/' },
   { label: 'Projects', href: '/#projects' },
-  { label: 'Writing', href: '/#writing' },
+  { label: 'Writing', href: '/writing/' },
 ];
 ---
 
 <header class="site-header">
   <div class="site-container header-inner">
-    <a class="brand" href="/" aria-label="Triet's Engineering Field Notes — Home">
-      TRIET <span aria-hidden="true">/</span> FIELD NOTES
+    <a class="brand" href="/" aria-label="Triet's Notes — Home">
+      TRIET <span aria-hidden="true">/</span> LE TRAN MINH
     </a>
     <nav aria-label="Primary">
       <ul class="nav-links">
-        {links.map(({ label, href }) => (
-          <li>
-            <a href={href} aria-current={pathname === href ? 'page' : undefined}>
-              {label}
-            </a>
-          </li>
-        ))}
+        {links.map(({ label, href }) => {
+          const isCurrent = href === '/'
+            ? pathname === '/'
+            : !href.startsWith('/#') && pathname.startsWith(href);
+          return (
+            <li>
+              <a href={href} aria-current={isCurrent ? 'page' : undefined}>
+                {label}
+              </a>
+            </li>
+          );
+        })}
         <li><a href={site.githubUrl}>GitHub <span aria-hidden="true">↗</span></a></li>
       </ul>
     </nav>
@@ -38,7 +42,7 @@ const links = [
     align-items: center;
     justify-content: space-between;
     gap: var(--space-4) var(--space-8);
-    padding-block: var(--space-6);
+    padding-block: var(--space-4);
   }
   .brand {
     font-family: var(--font-mono);

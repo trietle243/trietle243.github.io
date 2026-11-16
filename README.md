@@ -1,6 +1,6 @@
 # Triet's Engineering Field Notes — implementation package
 
-Status: **foundation implemented through P0-A2; content and deployment pending**.
+Status: **foundation, content system, and homepage shell implemented through P0-B1; projects directory and public release pending**.
 Prepared: 2026-11-15. Target: `https://trietle243.github.io/` (proposed, not verified live).
 
 ## Read in this order
@@ -111,4 +111,25 @@ Chrome launch is blocked by the environment (`setsockopt: Operation not
 permitted`), so visual overflow checks at 320/360/768/1280px and keyboard behavior
 still need a browser review; source/HTML checks do not establish those results.
 
-Next ticket after review: **P0-A3 — Typed content model and public-content policy**.
+## Content system (P0-A3)
+
+Projects and writing now use Astro Content Layer collections with validated
+frontmatter, typed access helpers, and one unpublished example MDX fixture each.
+See [CONTENT.md](CONTENT.md) for the current schemas, filename/ID conventions,
+authoring, validation, and draft-to-published workflow. No content pages or
+homepage changes are part of this ticket.
+
+The latest hosting direction is Cloudflare Pages with a private GitHub repository.
+Earlier GitHub Pages references describe the original plan; hosting configuration
+has deliberately not changed in P0-A3.
+
+## Homepage shell (P0-B1)
+
+The homepage (`src/pages/index.astro`) implements a 5-section vertical flow:
+- `01 / INTRODUCTION`: Hero heading, nickname tooltip (`Phil`), typewriter role cycling, verified contact chips (GitHub, LinkedIn, Email with one-click copy), and responsive full-width ASCII portrait (`triet.txt`).
+- `02 / ABOUT ME`: Sincere single-paragraph narrative.
+- `03 / EXPERIENCE`: Data-driven career timeline powered by `src/data/experience.ts` with verified roles across Home Credit Vietnam, MWG, and Lotte Vina International.
+- `04 / PROJECTS`: Wired to `projects` collection with draft filtering.
+- `05 / WRITING`: Wired to `writing` collection with draft filtering and link to `/writing/`.
+
+Next ticket after review: **P0-B2 — Projects directory and minimal filter**.
